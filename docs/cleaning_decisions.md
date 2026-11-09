@@ -18,15 +18,12 @@ Problems come from the Step 1 summary in `notebooks/01_data_understanding.ipynb`
 | 8 | Missing `City` | 128 | 70 filled from `Region` where the region has only one city in the data; 58 set to "Unknown" | The region fixes the city only when it has one city; the rest would be a guess. The planned questions do not use `City` |
 | 9 | Missing Gender, Customer_Segment, Payment_Method, Marketing_Channel, Customer_Name | 174 / 128 / 135 / 130 / 121 | Filled with "Unknown" | No other column can recover them. About 29% of rows in the raw file (1,451 of 5,020) had at least one missing value, so deleting rows would lose too much data |
 | 10 | Missing Age, Delivery_Days, Customer_Rating | 171 / 202 / 285 | Left as missing on purpose | Filling with an average would add made-up numbers; averages and other statistics ignore missing values anyway |
+| 11 | Cancelled orders with ratings and delivery days | 256 cancelled (237 ratings, 247 delivery days) | Set both columns to missing for cancelled orders | A cancelled order was never delivered, so delivery days and a rating make no sense. The averages barely change, so this is for correct logic |
+| 12 | `Returned` duplicates `Order_Status` | 344 returned rows | Kept both columns and added an assertion that they match | `Returned` is a handy 0/1 flag for the return rate; the assertion prevents the two from diverging |
+| 13 | Column types and new columns | Age, Delivery_Days, Category, Customer_Segment; new: Year, Month, Total_Cost | Age and Delivery_Days -> `Int64`, Category and Customer_Segment -> `category`; added `Year`, `Month` and `Total_Cost = Quantity × Cost` | Whole numbers should not be decimals; `Cost` is per unit, so total cost needs the quantity |
 
-Note: the missing-value counts in Step 2 differ slightly from Step 1. Removing the 20 duplicates removed a few missing values, and setting impossible values to missing created new ones (Age +4, Customer_Rating +2, Discount +2, Delivery_Days +1).
 
-## Planned (not done yet)
+Notes on missing-value counts:
 
-Each item moves to the table above when it is done, with its row count, action and reason.
-
-| # | Issue | Planned action |
-|---|-------|----------------|
-| 11 | Cancelled orders with ratings and delivery days | Decide: set to missing or keep and document |
-| 12 | `Returned` duplicates `Order_Status` | Decide which column to keep |
-| 13 | `Customer_ID` not consistent with name, age, gender | Cannot be fixed; document as a limitation |
+- The counts in Step 2 differ slightly from Step 1. Removing the 20 duplicates removed a few missing values, and setting impossible values to missing created new ones (Age +4, Customer_Rating +2, Discount +2, Delivery_Days +1).
+- The counts in row 10 (Age 171, Delivery_Days 202, Customer_Rating 285) were correct when missing values were handled. After row 11, Customer_Rating has 522 and Delivery_Days 449 missing values, because cancelled orders were set to missing.
