@@ -2,7 +2,7 @@
 
 End-to-end analysis of an e-commerce orders dataset: data understanding, data cleaning, exploratory data analysis (EDA), visualization and business insights, using Python and pandas.
 
-> **Status:** 🚧 In progress. Steps 1 (Data Understanding) and 2 (Data Cleaning) are complete. Currently working on Step 3 (EDA and Visualization).
+> **Status:** 🚧 In progress. Steps 1 to 3 (Data Understanding, Data Cleaning, EDA and Visualization) are complete. Currently working on Step 4 (Business Questions).
 
 ---
 
@@ -52,8 +52,8 @@ All data in this project is **synthetic**. It does not represent a real company 
 |------|----------|---------|--------|
 | 1 | `notebooks/01_data_understanding.ipynb` | Inspect structure, types, missing values, duplicates and value ranges | ✅ Done |
 | 2 | `notebooks/02_data_cleaning.ipynb` | Fix inconsistencies and produce a clean dataset | ✅ Done |
-| 3 | `notebooks/03_eda_visualization.ipynb` | Explore distributions, trends and relationships with charts | 🔄 In progress |
-| 4 | `notebooks/04_business_questions.ipynb` | Answer specific business questions and give recommendations | ⏳ Not started |
+| 3 | `notebooks/03_eda_visualization.ipynb` | Explore distributions, trends and relationships with charts | ✅ Done |
+| 4 | `notebooks/04_business_questions.ipynb` | Answer specific business questions and give recommendations | 🔄 In progress |
 
 Every cleaning decision (what was wrong, how many rows, what was done and why) is documented in [`docs/cleaning_decisions.md`](docs/cleaning_decisions.md).
 
@@ -110,26 +110,45 @@ Missing values kept on purpose (not filled with averages): `Age` (171), `Deliver
 
 ## Key Findings
 
-_Preliminary results from Step 3 (cancelled orders excluded). The final findings will be added after Step 4. All results describe this synthetic dataset only._
+_Results from Step 3 (cancelled orders excluded: 4,744 orders, total sales 848,957). Recommendations will be added after Step 4. All results describe this synthetic dataset only._
 
 ### Sales over time
 
-Monthly sales move between about 17,000 (February 2024: 16,821) and 31,000 (May 2025: 31,306) with no clear upward or downward trend. Profit is much steadier and follows the same direction.
+Monthly sales move between 16,821 (February 2024) and 31,306 (May 2025) with no clear upward or downward trend. Profit is steadier and follows the same direction.
 
 ![Monthly sales and profit](reports/figures/01_monthly_sales_profit.png)
 
 ### Category
 
-Electronics and Home & Kitchen bring 62.2% of total sales (848,957). Sports is the smallest category (3.7% of sales) but has the highest profit margin (47.8%). Office has the lowest margin (18.1%).
+Electronics and Home & Kitchen bring 62.2% of total sales. Sports is the smallest category (3.7% of sales) but has the highest profit margin (47.8%). Office has the lowest margin (18.1%).
 
 ![Sales and profit by category](reports/figures/02_sales_profit_by_category.png)
 
 ### Country
 
-Germany brings 43.5% of total sales, almost three times France. Profit margins are similar across all six countries (22.9% to 24.9%), so the difference is in sales volume, not in margin.
+Germany brings 43.5% of total sales because it has the most orders (2,076 of 4,744), not because its orders are bigger. Profit margins are similar across all six countries (22.9% to 24.9%).
 
 ![Sales and profit by country](reports/figures/03_sales_profit_by_country.png)
 
+### Discounts
+
+Deeper discounts do not bring bigger orders (average quantity stays at about 1.9), but the profit margin falls from 36.5% (0-5% discount) to 5.8% (30-35%). 155 orders lost money, and 134 of them have a discount above 30%.
+
+![Discount vs margin and quantity](reports/figures/08_discount_margin_quantity.png)
+
+### Delivery, ratings and returns
+
+Shipping method changes delivery time (Pickup 1.0 day, Express 2.5, Standard 6.0) but not the average rating (3.96 to 3.99). Delivery time has almost no relation with rating or returns. The return rate is 7.3% and is spread evenly.
+
+![Delivery days vs rating and returns](reports/figures/10_delivery_days_rating_returns.png)
+
+### Other results
+
+- **Marketing channel:** the six known channels are balanced (15.7% to 16.8% of sales each).
+- **Customer segment:** Consumer brings 56.4% of sales; margins are similar in all segments.
+- **Device:** Desktop (46.5%) and Mobile (46.1%) are almost equal; Tablet is 7.4%.
+
+All charts are in [`reports/figures/`](reports/figures/).
 ## Project Structure
 
 ```text
