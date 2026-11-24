@@ -2,7 +2,7 @@
 
 End-to-end analysis of an e-commerce orders dataset: data understanding, data cleaning, exploratory data analysis (EDA), visualization and business insights, using Python and pandas.
 
-> **Status:** 🚧 In progress. Steps 1 to 3 (Data Understanding, Data Cleaning, EDA and Visualization) are complete. Currently working on Step 4 (Business Questions).
+> **Status:** ✅ Complete. All four steps are finished. The full written summary is in [`reports/summary.md`](reports/summary.md).
 
 ---
 
@@ -13,14 +13,17 @@ End-to-end analysis of an e-commerce orders dataset: data understanding, data cl
 3. [Disclaimer](#disclaimer)
 4. [Workflow](#workflow)
 5. [Data Understanding Summary](#data-understanding-summary)
-6. [Business Questions](#business-questions)
-7. [Data Cleaning Summary](#data-cleaning-summary)
-8. [Analysis Rules](#analysis-rules)
+6. [Data Cleaning Summary](#data-cleaning-summary)
+7. [Analysis Rules](#analysis-rules)
+8. [Business Questions and Answers](#business-questions-and-answers)
 9. [Key Findings](#key-findings)
-10. [Project Structure](#project-structure)
-11. [How to Run](#how-to-run)
-12. [Tools](#tools)
-13. [Author](#author)
+10. [Recommendations](#recommendations)
+11. [Limitations](#limitations)
+12. [Project Structure](#project-structure)
+13. [How to Run](#how-to-run)
+14. [Tools](#tools)
+15. [AI Assistance](#ai-assistance)
+16. [Author](#author)
 
 ---
 
@@ -53,7 +56,7 @@ All data in this project is **synthetic**. It does not represent a real company 
 | 1 | `notebooks/01_data_understanding.ipynb` | Inspect structure, types, missing values, duplicates and value ranges | ✅ Done |
 | 2 | `notebooks/02_data_cleaning.ipynb` | Fix inconsistencies and produce a clean dataset | ✅ Done |
 | 3 | `notebooks/03_eda_visualization.ipynb` | Explore distributions, trends and relationships with charts | ✅ Done |
-| 4 | `notebooks/04_business_questions.ipynb` | Answer specific business questions and give recommendations | 🔄 In progress |
+| 4 | `notebooks/04_business_questions.ipynb` | Answer specific business questions and give recommendations | ✅ Done |
 
 Every cleaning decision (what was wrong, how many rows, what was done and why) is documented in [`docs/cleaning_decisions.md`](docs/cleaning_decisions.md).
 
@@ -70,18 +73,6 @@ Main findings from Step 1 (details in `notebooks/01_data_understanding.ipynb`):
 - **Customer data:** the same `Customer_ID` appears with different names, ages and genders, so customer-level analysis (for example repeat customers) is not reliable.
 - **Verified relationships:** `Sales = Quantity × Unit_Price × (1 − Discount)` and `Profit = Sales − Quantity × Cost`, so `Cost` is a cost per unit.
 
-## Business Questions
-
-_Draft list. It will be finalized after the exploratory analysis._
-
-1. How do sales and profit change over time (month, quarter, year)?
-2. Which product categories and products bring the most revenue, and which bring the most profit?
-3. How do discounts affect quantity sold and profit? At what discount level do orders start losing money?
-4. Which marketing channels, customer segments and countries perform best?
-5. How do shipping method and delivery time relate to customer rating and returns?
-
-Questions about individual customers (such as repeat buying) are left out on purpose because of the customer data problem described above.
-
 ## Data Cleaning Summary
 
 Raw file: 5,020 rows × 28 columns. Clean file: 5,000 rows × 31 columns. Full details and reasons are in [`docs/cleaning_decisions.md`](docs/cleaning_decisions.md).
@@ -97,20 +88,31 @@ Raw file: 5,020 rows × 28 columns. Clean file: 5,000 rows × 31 columns. Full d
 | Missing `Discount` | 199 | Recovered with `1 − Sales / (Quantity × Unit_Price)` |
 | Missing `City` | 128 | 70 filled from `Region`, 58 set to "Unknown" |
 | Missing Gender, Segment, Payment, Channel, Name | 174 / 128 / 135 / 130 / 121 | Filled with "Unknown" |
-| Cancelled orders with rating and delivery days | See `cleaning_decisions.md` | Set to missing (a cancelled order has no delivery or rating) |
+| Cancelled orders with rating and delivery days | 256 cancelled orders (237 with a rating, 247 with delivery days) | Rating and delivery days set to missing |
 | `Customer_ID` inconsistent with name, age, gender | Most IDs | Not changed; documented as a limitation |
 
 Missing values kept on purpose (not filled with averages): `Age` (171), `Delivery_Days` (449) and `Customer_Rating` (522).
 
 ## Analysis Rules
 
-- **Cancelled orders are excluded** from sales and profit totals, because they did not generate revenue.
-- **Returned orders are kept** in the totals, because the data does not say whether the money was refunded. Returns are analysed separately in Step 4.
+- **Cancelled orders are excluded** from sales and profit totals, because they did not generate revenue. The analysis uses 4,744 revenue orders.
+- **Returned orders are kept** in the totals, because the data does not say whether the money was refunded. Returns are analysed separately.
 - Missing `Age`, `Delivery_Days` and `Customer_Rating` are ignored by averages and charts.
+- Profit margin = profit ÷ sales.
+
+## Business Questions and Answers
+
+| # | Question | Short answer |
+|---|----------|--------------|
+| 1 | How do sales and profit change over time? | Sales fell 5.1% in 2024 and rose 6.8% in 2025 (only 1.4% above 2023). The profit margin slipped every year (24.6%, 23.8%, 23.5%). Quarter 4 is the weakest quarter in each year. |
+| 2 | Which categories and products bring the most revenue and profit? | Electronics and Home & Kitchen bring 62.2% of sales. Robot Vacuum is the top product (15.3% of sales). The five biggest products bring 55.5% of sales. Office Chair and Robot Vacuum have the lowest margins (10.9%, 15.2%). |
+| 3 | How do discounts affect quantity and profit? | Quantity per order stays at about 1.9, but the margin falls from 36.5% (0-5% discount) to 5.8% (30-35%). Losses start at about an 18.5% discount and are common above 30% (134 of 155 loss-making orders). |
+| 4 | Which channels, segments and countries perform best? | Germany brings 43.5% of sales and Consumer 56.4%, because of the number of orders. The six marketing channels are balanced (15.7% to 16.8% each). Margins are similar inside each group. |
+| 5 | How do shipping and delivery time relate to rating and returns? | No clear relation. Ratings are 3.96 to 3.99 for every shipping method; the correlation of delivery days and rating is -0.04. The return rate is 7.3% and spread evenly. |
 
 ## Key Findings
 
-_Results from Step 3 (cancelled orders excluded: 4,744 orders, total sales 848,957). Recommendations will be added after Step 4. All results describe this synthetic dataset only._
+_Cancelled orders excluded: 4,744 orders, total sales 848,957, total profit 203,627. All results describe this synthetic dataset only._
 
 ### Sales over time
 
@@ -148,7 +150,55 @@ Shipping method changes delivery time (Pickup 1.0 day, Express 2.5, Standard 6.0
 - **Customer segment:** Consumer brings 56.4% of sales; margins are similar in all segments.
 - **Device:** Desktop (46.5%) and Mobile (46.1%) are almost equal; Tablet is 7.4%.
 
+<details>
+<summary>More charts</summary>
+
+#### Marketing channel
+![Sales and profit by marketing channel](reports/figures/04_sales_profit_by_channel.png)
+
+#### Customer segment
+![Sales and profit by customer segment](reports/figures/05_sales_profit_by_segment.png)
+
+#### Device type
+![Sales and profit by device type](reports/figures/06_sales_profit_by_device.png)
+
+#### Discount distribution
+![Discount distribution](reports/figures/07_discount_distribution.png)
+
+#### Shipping method
+![Shipping method vs delivery, rating and returns](reports/figures/09_shipping_method.png)
+
+#### Quarterly sales by year
+![Quarterly sales by year](reports/figures/11_quarterly_sales_by_year.png)
+
+#### Sales and profit by product
+![Sales and profit by product](reports/figures/12_product_sales_profit.png)
+
+#### Discount margin and losses
+![Discount margin and losses](reports/figures/13_discount_margin_and_losses.png)
+
+</details>
+
 All charts are in [`reports/figures/`](reports/figures/).
+
+## Recommendations
+
+1. **Review discounts above 30%.** They give a 5.8% margin, 86.5% of all loss-making orders and no larger orders. Test a lower maximum (for example 25%) and compare orders and margin.
+2. **Review the price or cost of Office Chair and Robot Vacuum.** Together they bring 28.4% of sales at margins of 10.9% and 15.2%.
+3. **Track margin, not only sales.** Sales recovered in 2025, but the margin fell three years in a row.
+4. **Do not pay for faster shipping to raise ratings**, because speed does not change the rating in this data. Collect a return reason to find out why orders are returned.
+5. **Reduce the dependence on Germany** (43.5% of sales) and consider growing other countries, for example the Netherlands, which has the highest average order (196.3).
+6. **Do not move marketing budget between channels based on this data.** The channels are almost equal and no channel cost is available.
+
+The full write-up is in [`reports/summary.md`](reports/summary.md).
+
+## Limitations
+
+- The data is synthetic and covers three years.
+- `Customer_ID` is not consistent with name, age and gender, so the analysis counts orders, not unique customers.
+- `Age`, `Delivery_Days` and `Customer_Rating` have missing values that were kept as missing.
+- There is no data on marketing cost, shipping cost, return reasons or refunds, so some recommendations are ideas to test, not conclusions.
+
 ## Project Structure
 
 ```text
@@ -195,7 +245,24 @@ Run the notebooks in order, from `01` to `04`. Notebook `02` creates `data/proce
 
 Python, pandas, NumPy, Matplotlib, Seaborn, Jupyter Notebook, Git and GitHub.
 
+## AI Assistance
+
+This project was developed as a learning exercise with the assistance of AI tools.
+
+- **ChatGPT (OpenAI):** Used to generate the dataset.
+- **Claude (Anthropic):** Used as a guide for planning the workflow, suggesting code improvements, and reviewing written explanations.
+
+All code was executed by me in my own development environment. I independently checked the outputs against the notebook results and documented the data-cleaning decisions and analytical conclusions in `docs/cleaning_decisions.md` and `reports/summary.md`.
+
+I take responsibility for understanding, executing, validating, and documenting the entire analysis rather than relying blindly on AI-generated suggestions. AI tools supported my learning process, but the implementation, verification, and final decisions were my responsibility.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 ## Author
 
 **Ariful Islam**
 GitHub: [@ariful3551](https://github.com/ariful3551)
+
+Email: ariful3551@gmail.com
