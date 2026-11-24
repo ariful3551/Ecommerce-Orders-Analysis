@@ -241,6 +241,8 @@ jupyter notebook
 
 Run the notebooks in order, from `01` to `04`. Notebook `02` creates `data/processed/ecommerce_orders_clean.csv`, which notebooks `03` and `04` read with `parse_dates=["Order_Date"]`.
 
+To rebuild the clean dataset without the notebook, run `python src/cleaning.py` from the project root.
+
 ## Tools
 
 Python, pandas, NumPy, Matplotlib, Seaborn, Jupyter Notebook, Git and GitHub.
